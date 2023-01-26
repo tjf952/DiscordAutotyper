@@ -1,5 +1,5 @@
 
-# discord-autotyper-python
+# Discord AutoTyper [Python]
 A python script to auto send commands in Discord or any other program.
 <br>
 <img alt="Python3" src="https://img.shields.io/badge/-Python3-3776AB?style=flat-square&logo=Python&logoColor=white" />
@@ -50,17 +50,15 @@ This is the configuration file used by the program.
 ### CHANGE_ME
 If you want to read from specific pages, you'll have to do some extra work
 
-(1) Set reader to `true` in the settings.json
-
-(2) Change authorization code by retrieving it from Discord
+1. Set reader to `true` in the settings.json
+2. Change authorization code by retrieving it from Discord
     - Enter Developer Tools [Ctrl+Shift+I]
     - Go to [Network Tab]
     - Refresh page [F5] or [Ctrl+R]
     - Find message that says 'messages?limit=50'
     - Scroll through 'Request Headers' and look for 'authorization' key i.e. 'authorization: KEY'
     - Copy KEY into authorization in the settings.json
-
-(3) Change channel_id value by retrieving it from Discord
+3. Change channel_id value by retrieving it from Discord
     - Enter Developer Tools [Ctrl+Shift+I]
     - Go to [Network Tab]
     - Enter a message into the channel you want to read from
@@ -69,7 +67,7 @@ If you want to read from specific pages, you'll have to do some extra work
     - Hint: This should be the same as the last number in the URL in your browser
     - Copy CHANNEL_ID into channelid in the settings.json
 
-IMPORTANT: Do not change to a different channel after starting because it will read from the specific channel
+***IMPORTANT***: Do not change to a different channel after starting because it will read from the specific channel
 
 #### command object
 Each command is a object with three keys
@@ -100,6 +98,9 @@ You want to send the command `pls beg` after every 45s with a random delay. You 
     "randomSkip": 0.2,
     "randomTime": 60,
     "stopAfter": -1,
+    "reader": false,
+    "authorization": "CHANGE_ME",
+    "channelid": "CHANGE_ME",
     "commands": [
         {
             "text": "pls beg",
@@ -125,6 +126,9 @@ You want to send the command `pls beg` after every 45s with a random delay, `pls
     "randomSkip": 0.2,
     "randomTime": 60,
     "stopAfter": -1,
+    "reader": false,
+    "authorization": "CHANGE_ME",
+    "channelid": "CHANGE_ME",
     "commands": [
         {
             "text": "pls beg",
@@ -179,11 +183,3 @@ You want the autotype to automatically stop after `4hrs`. Then the following wil
 - Make a new server with a few channels and invite the bot you want to use the commands on.
 - In `settings.json` make sure to set the `randomSkip` and enable `randomtime` for each command
 - Pause the autotyper often and change channels
-
-## Bugs / Suggestions
-Report any bugs / glitch, or make a suggestion using the github issues section.
-
-## Support
-Join the Discord Server: [3ddelano Cafe](https://discord.gg/FZY9TqW)
-<br>
-<a href="https://www.buymeacoffee.com/3ddelano" target="_blank"><img height="41" width="174" src="https://cdn.buymeacoffee.com/buttons/v2/default-red.png" alt="Buy Me A Coffee" width="150" ></a>
