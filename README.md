@@ -185,6 +185,6 @@ You want the autotype to automatically stop after `4hrs`. Then the following wil
 - Pause the autotyper often and change channels
 
 ## Credit
-Forked from code written by Delano Lourenco
-Repo: [discord-autotyper-python](https://github.com/3ddelano/discord-autotyper-python)
+Forked from code written by Delano Lourenco \
+Repo: [discord-autotyper-python](https://github.com/3ddelano/discord-autotyper-python) \
 Great solution that I wanted to build on!
