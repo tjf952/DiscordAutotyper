@@ -69,7 +69,7 @@ If you want to read from specific pages, you'll have to do some extra work
 
 ***IMPORTANT***: Do not change to a different channel after starting because it will read from the specific channel
 
-#### command object
+### Command Object
 Each command is a object with three keys
 
 | Key        | Type    | Value                                                                                                                  |
@@ -78,7 +78,7 @@ Each command is a object with three keys
 | waittime   | integer | The time in seconds to wait before sending the command                                                                 |
 | randomtime | boolean | If enabled, a random delay will be added to the `waittime` so as to reduce the chance of getting banned or blacklisted |
 
-#### onetime object
+### Onetime Object
 | Key      | Type    | Value                                                                            |
 | -------- | ------- | -------------------------------------------------------------------------------- |
 | hotkey   | string  | The `KeyCode` of the key to start the onetime commands. eg. `Key.f7` or `Key.f8` |
@@ -183,3 +183,8 @@ You want the autotype to automatically stop after `4hrs`. Then the following wil
 - Make a new server with a few channels and invite the bot you want to use the commands on.
 - In `settings.json` make sure to set the `randomSkip` and enable `randomtime` for each command
 - Pause the autotyper often and change channels
+
+## Credit
+Forked from code written by Delano Lourenco
+Repo: [discord-autotyper-python](https://github.com/3ddelano/discord-autotyper-python)
+Great solution that I wanted to build on!
