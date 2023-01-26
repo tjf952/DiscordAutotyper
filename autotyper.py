@@ -10,6 +10,9 @@ from threading import Timer
 from pynput.keyboard import Key, Controller, Listener
 from random import randint
 
+import requests
+import sys
+
 
 try:
     open("./settings.json")
@@ -34,7 +37,21 @@ onetime_delay = int(settings["onetime"]["delay"])
 randomTime = int(settings["randomTime"])
 command_delay = float(settings["commandDelay"])
 stop_after = float(settings["stopAfter"])
+channel = settings["channelid"]
+authcode = settings["authorization"]
 controller = Controller()
+
+checks = ["police_car", "stop there", "perfect"]
+enchant_list = ["EDGY", "ULTRA-EDGY", "OMEGA", "ULTRA-OMEGA", "GODLY", "VOID"]
+
+def exit():
+    global started
+    global exited
+    global queue
+    queue = []
+    press_backspace()
+    started = False
+    exited = True
 
 
 def stop_typer():
@@ -50,7 +67,29 @@ def start_stop_after():
         Timer(stop_after*60, stop_typer).start()
 
 
+def read_messages(channelid):
+    headers = {
+        "authorization": authcode
+    }
+    r = requests.get(f"https://discord.com/api/v9/channels/{channelid}/messages", headers=headers)
+    jsonn = json.loads(r.text)
+    for idx, value in enumerate(jsonn[:2]):
+        if any(check in value["content"] for check in checks):
+            exit()
+            sys.exit("### GUARD DETECTED ###")
+        if value["embeds"]:
+            embed = value["embeds"][0]
+            if "fields" in embed:
+                enchant = embed["fields"][0]["name"]
+                if "sparkle" in enchant:
+                    enchant = enchant.split("*")[2].upper()
+                if enchant in enchant_list:
+                    exit()
+                    sys.exit(f"### {enchant} ENCHANT DETECTED ###")
+
+
 def send_command(text):
+    read_messages(channel)
     global controller
     controller.type(text)
     controller.press(Key.enter)
@@ -69,13 +108,11 @@ def add_command(text, waittime, isRandom):
         if isRandom:
             random_delay = floor(randint(0, randomTime))
         if randint(0, 100) / 100 <= settings["randomSkip"]:
-            print(
-                f"skipped command: {text} | next in {waittime + random_delay}s | total commands: {cmd_count}")
+            print(f"skipped command: {text} | next in {waittime + random_delay}s | total commands: {cmd_count}")
         else:
             cmd_count += 1
             queue.append({"text": text, "waittime": waittime})
-            print(
-                f"sending cmd: {text} | next in {waittime + random_delay}s | total commands: {cmd_count}")
+            print(f"sending cmd: {text} | next in {waittime + random_delay}s | total commands: {cmd_count}")
         t = Timer(waittime + random_delay, add_command, args=(
             text, waittime, isRandom))
         t.start()
@@ -132,10 +169,8 @@ def on_key_press(key):
         else:
             print("Stopped.")
     if key == settings["exitkey"]:
-        press_backspace()
         print("Exited.")
-        started = False
-        exited = True
+        exit()
         return False
 
     global onetime_cooldown
