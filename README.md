@@ -40,9 +40,36 @@ This is the configuration file used by the program.
 | showKeyCode  | boolean | Used as a helper to show the `KeyCode` of the pressed key                                               |
 | randomSkip   | float   | A value from 0 to 1 indicating whether to skip a command randomly to prevent ban and blacklisting       |
 | randomTime   | integer | The maximum value in seconds to choose the random delay between commands (value is added to `waittime`) |
-| stopAfter   | float | The time in minutes to stop the autotyping after. (set to `-1` for infinite autotype) |
+| stopAfter    | float   | The time in minutes to stop the autotyping after. (set to `-1` for infinite autotype)                   |
 | commands     | array   | An array of `command object`                                                                            |
 | onetime      | object  | A JS object containing some settings. See `onetime object` below                                        |
+| reader       | boolean | Used to decide whether to use below options and enable reading within main script                       |
+| authorization| string  | CHANGE_ME: Represents the authorizationd code to conduct web requests from specific channels            |
+| channelid    | string  | CHANGE_ME: Represents the channel on Discord to read from                                               |
+
+### CHANGE_ME
+If you want to read from specific pages, you'll have to do some extra work
+
+(1) Set reader to `true` in the settings.json
+
+(2) Change authorization code by retrieving it from Discord
+    - Enter Developer Tools [Ctrl+Shift+I]
+    - Go to [Network Tab]
+    - Refresh page [F5] or [Ctrl+R]
+    - Find message that says 'messages?limit=50'
+    - Scroll through 'Request Headers' and look for 'authorization' key i.e. 'authorization: KEY'
+    - Copy KEY into authorization in the settings.json
+
+(3) Change channel_id value by retrieving it from Discord
+    - Enter Developer Tools [Ctrl+Shift+I]
+    - Go to [Network Tab]
+    - Enter a message into the channel you want to read from
+    - Find message that says 'messages' (should be the most recent one)
+    - It should be in the Request URL i.e. 'https://discord.com/api/v9/channels/CHANNEL_ID/messages'
+    - Hint: This should be the same as the last number in the URL in your browser
+    - Copy CHANNEL_ID into channelid in the settings.json
+
+IMPORTANT: Do not change to a different channel after starting because it will read from the specific channel
 
 #### command object
 Each command is a object with three keys

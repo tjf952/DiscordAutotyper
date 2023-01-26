@@ -1,18 +1,25 @@
-"""discord-autotyper-python
-Delano Lourenco (https://delano-lourenco.web.app)
-Repo: https://github.com/3ddelano/discord-autotyper-python
+#!/usr/bin/env python3
+
+"""Discord AutoTyper
+
+Will autotype desired commands into Discord.
+Can also read from specific channel to conduct other actions.
+
+Usage: $ python3 autotyper.py
+
+Forked from https://github.com/3ddelano/discord-autotyper-python 
+    by Delano Lourenco (https://delano-lourenco.web.app)
 """
 
 
 import json
+import sys
 from math import floor
-from threading import Timer
-from pynput.keyboard import Key, Controller, Listener
 from random import randint
+from threading import Timer
 
 import requests
-import sys
-
+from pynput.keyboard import Controller, Key, Listener
 
 try:
     open("./settings.json")
@@ -37,12 +44,14 @@ onetime_delay = int(settings["onetime"]["delay"])
 randomTime = int(settings["randomTime"])
 command_delay = float(settings["commandDelay"])
 stop_after = float(settings["stopAfter"])
-channel = settings["channelid"]
-authcode = settings["authorization"]
+
+reader = settings["reader"]
+if reader:
+    channel = settings["channelid"]
+    authcode = settings["authorization"]
+
 controller = Controller()
 
-checks = ["police_car", "stop there", "perfect"]
-enchant_list = ["EDGY", "ULTRA-EDGY", "OMEGA", "ULTRA-OMEGA", "GODLY", "VOID"]
 
 def exit():
     global started
@@ -64,16 +73,20 @@ def stop_typer():
 def start_stop_after():
     global stop_after
     if stop_after > 0:
-        Timer(stop_after*60, stop_typer).start()
+        Timer(stop_after * 60, stop_typer).start()
 
+checks = ["police_car", "stop there"]
+enchant_list = ["OMEGA", "ULTRA-OMEGA", "GODLY", "VOID"]
 
 def read_messages(channelid):
-    headers = {
-        "authorization": authcode
-    }
-    r = requests.get(f"https://discord.com/api/v9/channels/{channelid}/messages", headers=headers)
-    jsonn = json.loads(r.text)
-    for idx, value in enumerate(jsonn[:2]):
+    headers = {"authorization": authcode}
+    r = requests.get(
+        f"https://discord.com/api/v9/channels/{channelid}/messages", headers=headers
+    )
+    recv = json.loads(r.text)
+    user = recv[0]["author"]["username"]
+    print(f"Message from {user}")
+    for idx, value in enumerate(recv[:10]):
         if any(check in value["content"] for check in checks):
             exit()
             sys.exit("### GUARD DETECTED ###")
@@ -89,7 +102,8 @@ def read_messages(channelid):
 
 
 def send_command(text):
-    read_messages(channel)
+    if reader:
+        read_messages(channel)
     global controller
     controller.type(text)
     controller.press(Key.enter)
@@ -108,13 +122,16 @@ def add_command(text, waittime, isRandom):
         if isRandom:
             random_delay = floor(randint(0, randomTime))
         if randint(0, 100) / 100 <= settings["randomSkip"]:
-            print(f"skipped command: {text} | next in {waittime + random_delay}s | total commands: {cmd_count}")
+            print(
+                f"skipped command: {text} | next in {waittime + random_delay}s | total commands: {cmd_count}"
+            )
         else:
             cmd_count += 1
             queue.append({"text": text, "waittime": waittime})
-            print(f"sending cmd: {text} | next in {waittime + random_delay}s | total commands: {cmd_count}")
-        t = Timer(waittime + random_delay, add_command, args=(
-            text, waittime, isRandom))
+            print(
+                f"sending cmd: {text} | next in {waittime + random_delay}s | total commands: {cmd_count}"
+            )
+        t = Timer(waittime + random_delay, add_command, args=(text, waittime, isRandom))
         t.start()
         timers.append(t)
 
@@ -128,8 +145,7 @@ def init_typer():
         timer.cancel()
     timers = []
     for cmd in commands:
-        add_command(cmd["text"], int(cmd["waittime"]),
-                    cmd["randomtime"] or False)
+        add_command(cmd["text"], int(cmd["waittime"]), cmd["randomtime"] or False)
 
 
 def remove_cooldown():
@@ -184,6 +200,10 @@ def on_key_press(key):
 
 
 print("Discord AutoTyper\nWaiting for hotkey to be pressed...")
+if reader:
+	print("[+] Reader enable...")
+else:
+	print("[!] Reader disabled...")
 listener = Listener(on_press=on_key_press)
 listener.start()
 
